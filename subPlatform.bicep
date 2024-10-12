@@ -4,6 +4,14 @@ param tags object
 param location string
 param resourceGroupName string
 param Name string
+// Appservice
+
+module AppServiceLoop 'module/appservice/appServicesLoop.bicep' = {
+  scope: resourceGroup(resourceGroupName)
+  name: 'appserviceloop'
+  params: {
+  }
+}
 
 // Appservice
 module AppService 'module/appservice/appservice.bicep' = {
@@ -24,8 +32,10 @@ module FrontDoor 'module/frontdoor/frontdoor.bicep' = {
   params: {
     location : location
     frontDoorName : '${Name}-223fd'
-    appServiceUrl : AppService.outputs.webAppUrl
-    frontDoorOriginName : AppService.outputs.webAppNames
+    appServiceUrls : AppServiceLoop.outputs.appServiceUrls
+    frontDoorOriginName : AppServiceLoop.outputs.appServiceNamesNeeded
+    // appServiceUrl : AppService.outputs.webAppUrl
+    // frontDoorOriginName : AppService.outputs.webAppNames
     tags: tags
   }
   dependsOn: [

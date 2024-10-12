@@ -5,8 +5,8 @@ param location string
 param frontDoorName string
 param tags object
 //param customDomain string = '${frontDoorName}.azurefd.net'
-param appServiceUrl string
-param frontDoorOriginName string
+param appServiceUrls array
+param frontDoorOriginName array
 var frontDoorSku = 'Standard_AzureFrontDoor'
 
 resource frontDoor 'Microsoft.Cdn/profiles@2021-06-01' = {
@@ -66,17 +66,37 @@ resource frontDoorOriginGroup 'Microsoft.Cdn/profiles/originGroups@2021-06-01' =
   }
 }
 
-resource frontDoorOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
-  name: frontDoorOriginName
+// Loop through the array of App Service URLs to create Front Door Origins
+resource frontDoorOrigins 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = [for i in range(0, length(appServiceUrls)): {
+  name: 'origin-${i}'
   parent: frontDoorOriginGroup
   properties: {
-    hostName: appServiceUrl
+    hostName: appServiceUrls[i]
     httpPort: 80
     httpsPort: 443
-    originHostHeader: appServiceUrl
-    priority: 1
+    originHostHeader: appServiceUrls[i]
+    priority: 1 
     weight: 1000
     enforceCertificateNameCheck: true
-    enabledState: 'Enabled' 
+    enabledState: 'Enabled'
   }
-}
+}]
+
+// resource frontDoorOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
+//   name: frontDoorOriginName
+//   parent: frontDoorOriginGroup
+//   properties: {
+//     hostName: appServiceUrl
+//     httpPort: 80
+//     httpsPort: 443
+//     originHostHeader: appServiceUrl
+//     priority: 1
+//     weight: 1000
+//     enforceCertificateNameCheck: true
+//     enabledState: 'Enabled' 
+//   }
+// }
+
+
+// Output the names of created Front Door Origins for confirmation
+output frontDoorOriginNames array = [for i in range(0, length(appServiceUrls)): frontDoorOrigins[i].name]
