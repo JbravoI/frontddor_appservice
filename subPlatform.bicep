@@ -8,10 +8,10 @@ param Name string
 // Appservice
 module AppService 'module/appservice/appservice.bicep' = {
   scope: resourceGroup(resourceGroupName)
-  name: 'frontdoor'
+  name: 'appservice'
   params: {
     location : location
-    webAppName : '${Name}-wa'
+    webAppName : '${Name}-21345wa'
     appServicePlanName : '${Name}-asp'
     tags: tags
   }
@@ -23,8 +23,9 @@ module FrontDoor 'module/frontdoor/frontdoor.bicep' = {
   name: 'frontdoor'
   params: {
     location : location
-    frontDoorName : '${Name}-fd'
+    frontDoorName : '${Name}-223fd'
     appServiceUrl : AppService.outputs.webAppUrl
+    frontDoorOriginName : AppService.outputs.webAppNames
     tags: tags
   }
   dependsOn: [

@@ -1,22 +1,22 @@
 // Set the scope to the subscription
-targetScope = 'subscription'
+targetScope = 'subscription' 
 param tags object = {
-  ModifiedBy: ''
-  ModifiedDateTime: ''
+  ModifiedBy: 'asdf'
+  ModifiedDateTime: 'asbf'
 }
-param location string
+param location string = 'eastus'
 
 //enable resouces to deploy
-param resourceGroupName string
+param resourceGroupName string = '${Name}-rg'
 param Name string = 'test'
 
 
 // ResourceGroup
 module ResourceGroup 'module/resourceGroup/resourceGroup.bicep' = {
-  name: 'virtualMachine'
+  name: 'ResourceGroup'
   params: {
-    resourceGroupName : '${Name}-rg'
-    location: 'eastus'
+    resourceGroupName : resourceGroupName
+    location: location
     tags: tags
   }
 }

@@ -18,10 +18,7 @@ param skuTier string = 'PremiumV2'
 param capacity int = 1
 
 @description('Optional app settings for the Web App')
-param appSettings array = [
-  {key : 'WEBSITE_NODE_DEFAULT_VERSION'
-  appsettings: '~14'}
-]
+param appSettings object = {}
 
 @description('Enable HTTPS-only traffic')
 param httpsOnly bool = true
@@ -48,10 +45,10 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
     serverFarmId: appServicePlan.id
     siteConfig: {
       appSettings: [
-        for key in appSettings: {
-          name: key
-          value: appSettings[key]
-        }
+        // for key in appSettings: {
+        //   name: key
+        //   value: appSettings[key]
+        // }
       ]
     }
     httpsOnly: httpsOnly
@@ -59,3 +56,4 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
 }
 
 output webAppUrl string = webApp.properties.defaultHostName
+output webAppNames string = webApp.name
